@@ -8,10 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyrptocurrencyapp.common.Constants
 import com.example.cyrptocurrencyapp.common.Resource
 import com.example.cyrptocurrencyapp.domain.use_case.get_coin.GetCoinUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
+@HiltViewModel
 class CoinDetailViewModel @Inject constructor(
     private val getCoinUseCase: GetCoinUseCase,
     savedStateHandle: SavedStateHandle
@@ -22,19 +24,15 @@ class CoinDetailViewModel @Inject constructor(
 
     init {
         savedStateHandle.get<String>(Constants.COIN_ID)?.let { coinId ->
-            getCoin(coinId = coinId)
+            getCoin(coinId)
         }
     }
 
     private fun getCoin(coinId: String) {
-        getCoinUseCase(
-            coinId = coinId
-        ).onEach { result ->
+        getCoinUseCase(coinId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    _state.value = CoinDetailState(
-                        coin = result.data
-                    )
+                    _state.value = CoinDetailState(coin = result.data)
                 }
                 is Resource.Error -> {
                     _state.value = CoinDetailState(
@@ -42,12 +40,9 @@ class CoinDetailViewModel @Inject constructor(
                     )
                 }
                 is Resource.Loading -> {
-                    _state.value = CoinDetailState(
-                        isLoading = true
-                    )
+                    _state.value = CoinDetailState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
-
     }
 }

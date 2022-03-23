@@ -5,8 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.cyrptocurrencyapp.common.Constants
+import com.example.cyrptocurrencyapp.presentation.Screen
+import com.example.cyrptocurrencyapp.presentation.coin_detail.components.CoinDetailScreen
+import com.example.cyrptocurrencyapp.presentation.coin_list.components.CoinListScreen
 
 import com.example.cyrptocurrencyapp.presentation.ui.theme.CryptocurrencyAppYTTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 /** ----- UseCases -----
  * we use useCases in the project between viewModel and repository.
@@ -33,6 +41,7 @@ import com.example.cyrptocurrencyapp.presentation.ui.theme.CryptocurrencyAppYTTh
  *     coin_detail and coin_list are the screens (features)
  *
  */
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +49,22 @@ class MainActivity : ComponentActivity() {
         setContent {
             CryptocurrencyAppYTTheme {
                 Surface(color = MaterialTheme.colors.background) {
-
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.CoinListScreen.route
+                    ) {
+                        composable(
+                            route = Screen.CoinListScreen.route
+                        ) {
+                            CoinListScreen(navController)
+                        }
+                        composable(
+                            route = Screen.CoinDetailScreen.route + "/{${Constants.COIN_ID}}"
+                        ) {
+                            CoinDetailScreen()
+                        }
+                    }
                 }
             }
         }

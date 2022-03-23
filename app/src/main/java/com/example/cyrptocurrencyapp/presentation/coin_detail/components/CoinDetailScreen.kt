@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
@@ -25,19 +24,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.cyrptocurrencyapp.presentation.Screen
 import com.example.cyrptocurrencyapp.presentation.coin_detail.CoinDetailViewModel
-import com.example.cyrptocurrencyapp.presentation.coin_list.CoinListViewModel
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
-fun CoinListScreen(
+fun CoinDetailScreen(
     viewModel: CoinDetailViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         state.coin?.let { coin ->
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -45,17 +40,17 @@ fun CoinListScreen(
             ) {
                 item {
                     Row(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "${coin.rank}.${coin.name}.(${coin.symbol})",
+                            text = "${coin.rank}. ${coin.name} (${coin.symbol})",
                             style = MaterialTheme.typography.h2,
                             modifier = Modifier.weight(8f)
                         )
                         Text(
-                            text = if (coin.isActive) "active" else "inactive",
-                            color = if (coin.isActive) Color.Green else Color.Red,
+                            text = if(coin.isActive) "active" else "inactive",
+                            color = if(coin.isActive) Color.Green else Color.Red,
                             fontStyle = FontStyle.Italic,
                             textAlign = TextAlign.End,
                             modifier = Modifier
@@ -85,12 +80,11 @@ fun CoinListScreen(
                     }
                     Spacer(modifier = Modifier.height(15.dp))
                     Text(
-                        text = "Team Members",
+                        text = "Team members",
                         style = MaterialTheme.typography.h3
                     )
                     Spacer(modifier = Modifier.height(15.dp))
                 }
-
                 items(coin.team) { teamMember ->
                     TeamListItem(
                         teamMember = teamMember,
@@ -102,8 +96,7 @@ fun CoinListScreen(
                 }
             }
         }
-
-        if (state.error.isNotBlank()) {
+        if(state.error.isNotBlank()) {
             Text(
                 text = state.error,
                 color = MaterialTheme.colors.error,
@@ -114,8 +107,7 @@ fun CoinListScreen(
                     .align(Alignment.Center)
             )
         }
-
-        if (state.isLoading) {
+        if(state.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
